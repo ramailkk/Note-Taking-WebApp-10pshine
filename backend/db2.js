@@ -7,7 +7,7 @@ const pool = new Pool({
 
 module.exports = pool;
 
-// Test the connection
+// Test the connectiony
 pool.connect()
   .then(client => {
     return client
