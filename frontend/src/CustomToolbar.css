@@ -1,0 +1,33 @@
+/* Font size classes for Quill (must match whitelist values) */
+.ql-size-10px { font-size: 10px; }
+.ql-size-12px { font-size: 12px; }
+.ql-size-14px { font-size: 14px; }
+.ql-size-16px { font-size: 16px; }
+.ql-size-18px { font-size: 18px; }
+.ql-size-24px { font-size: 24px; }
+.ql-size-32px { font-size: 32px; }
+.ql-size-48px { font-size: 48px; }
+
+/* Optional: style font & size dropdowns to be smaller */
+.ql-toolbar .ql-font,
+.ql-toolbar .ql-size {
+  padding: 2px 6px;
+  height: 28px;
+  font-size: 13px;
+  width: auto;
+  max-width: 120px;
+  border: 1px solid #ccc;
+  border-radius: 4px;           
+  background-color: #fff;
+
+  box-sizing: border-box;
+  vertical-align: middle;
+
+  outline: none;
+  box-shadow: none;
+}
+
+/* Button spacing */
+.ql-toolbar button {
+  margin-right: 0px;
+}

@@ -1,11 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { FaGoogle, FaLinkedin, FaGithub } from 'react-icons/fa';
+
+
 
 function SignUp() {
   const handleOAuthSignup = (provider) => {
     window.location.href = `https://your-backend.com/auth/${provider}`;
   };
+  
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">

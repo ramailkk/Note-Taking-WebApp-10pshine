@@ -8,12 +8,11 @@ import TextEditor from './TextEditor';
 import TopBar from './TopBar';
 import Sidebar from './Sidebar';
 import NotePanel from './NotePanel';
+import Screen from './Screen';
 
 function App() {
   return (
-    <>
-    <NotePanel></NotePanel>
-    </>
+    <SignUp></SignUp>
   );
 }
 
