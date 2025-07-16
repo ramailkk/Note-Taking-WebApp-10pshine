@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode"; // ✅ correct import
+import { jwtDecode } from "jwt-decode"; 
 
 const AuthContext = createContext();
 
@@ -17,10 +17,30 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (token && !isTokenValid(token)) {
+  const checkAndRefreshToken = async () => {
+    if (!token || isTokenValid(token)) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/auth/refresh", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        login(data.token);
+      } else {
+        logout();
+      }
+    } catch (err) {
+      console.error("Token refresh error:", err);
       logout();
     }
-  }, [token]);
+  };
+
+  checkAndRefreshToken();
+}, [token]);
+
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);

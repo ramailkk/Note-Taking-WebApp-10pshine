@@ -9,7 +9,7 @@ import {useAuth} from "../Authentication/AuthContext"
 import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 function App() {
   const { token, isLoggedIn } = useAuth();
-  console.log(token);
+  // localStorage.clear();
   return (
     <Router>
       <Routes>
