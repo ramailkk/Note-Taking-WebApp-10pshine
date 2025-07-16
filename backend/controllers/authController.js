@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const generateToken = require("../utils/jwt");
+require('dotenv').config();
+
 
 // for node mailer
 const crypto = require("crypto");
@@ -110,7 +112,20 @@ const login = async (req, res) => {
 
   await userModel.updateLastLogin(user.id);
 
-  const token = generateToken(user.id);
+  const token = generateToken(user.id, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN);
+
+  const refreshToken = generateToken(user.id, process.env.REFRESH_SECRET, process.env.REFRESH_EXPIRES_IN)
+
+  // Send refresh token as secure cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+  
+  console.log(refreshToken);
+
   // 4. Login success
   res.status(200).json({
     message: "Login successful",
@@ -122,10 +137,34 @@ const login = async (req, res) => {
       role: user.role,
     },
   });
+
+  // console.log(refreshToken)
 };
+
+const refresh = (req, res) => {
+  const token = req.cookies.refreshToken;
+  if (!token) return res.sendStatus(401); // no token
+
+  jwt.verify(token, REFRESH_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // invalid token
+
+    const newAccessToken = generateToken(user.id, JWT_SECRET, JWT_EXPIRES);
+
+    res.json({ token: newAccessToken });
+    console.log("I was called");
+  });
+};
+
+const logout = (req, res) => {
+  res.clearCookie("refreshToken");
+  res.status(204).send(); // No content
+};
+
 
 module.exports = {
   signup,
   login,
-  verifyEmail
+  verifyEmail,
+  refresh,
+  logout
 };

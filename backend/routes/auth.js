@@ -9,4 +9,8 @@ router.post('/login', authController.login);
 
 router.get("/verify/:token", authController.verifyEmail);
 
+router.post('/refresh', authController.refresh);
+
+router.post('/logout', authController.logout)
+
 module.exports = router;
