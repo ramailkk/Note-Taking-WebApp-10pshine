@@ -7,7 +7,7 @@ import Login from '../Authentication/Login';
 import SignUp from '../Authentication/SignUp';
 import Screen from './Screen';
 import Dashboard from '../Dashboard/Dashboard';
-// import UserPage from './UserPage';
+import UserPage from '../UserPage/UserPage';
 
 import Layout from '../App/AppLayout'; // New layout with Sidebar
 import { useAuth } from '../Authentication/AuthContext';
@@ -28,7 +28,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/notes" element={<Screen />} />
             <Route path="/home" element={<Dashboard />} />
-            {/*<Route path="/user" element={<UserPage />} />*/}
+            <Route path="/user" element={<UserPage />} />
           </Route>
         )}
 

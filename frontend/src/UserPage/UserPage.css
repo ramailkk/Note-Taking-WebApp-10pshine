@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Main container */
+.userpage-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  gap: 2rem;
+  border: 2px solid red;
+  min-height: calc(100vh - 500px);
+
+}
+.userpage-avatar-circle {
+  width: 250px;
+  height: 250px;
+  background: #FFBF00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 500px;
+}
+
+
+/* Profile card */
+.userpage-card {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 300px;
+}
+
+
+/*.userpage-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #FFBF00;
+}*/
+/*.userpage-card.disabled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cccccc;
+}*/
+
+/* Header */
+.userpage-header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.userpage-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.userpage-subtitle {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Form */
+.userpage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userpage-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userpage-form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.userpage-label-icon {
+  color: #6b7280;
+}
+
+/* Input styling */
+.userpage-form-input {
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 5px;
+  font-size: 0.90rem;
+  background: #fafafa;
+  color: #1f2937;
+}
+
+.userpage-form-input:focus {
+  outline: none;
+  background: white;
+}
+
+.userpage-input-error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.userpage-input-success {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+/* Input container for password fields */
+.userpage-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.userpage-input-container .userpage-form-input {
+  padding-right: 3rem;
+  flex: 1;
+}
+
+.userpage-eye-button {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userpage-eye-button:hover {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+/* Password toggle section */
+.userpage-password-toggle-section {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0px;
+  padding: 1rem;
+
+}
+
+.userpage-toggle-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.userpage-toggle-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userpage-toggle-icon {
+  color: #6b7280;
+}
+
+.userpage-toggle-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.userpage-toggle-subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* Custom toggle switch */
+.userpage-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.userpage-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.userpage-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.userpage-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.userpage-toggle-switch input:checked + .userpage-toggle-slider {
+  background-color: #FFBF00;
+}
+
+.userpage-toggle-switch input:checked + .userpage-toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Password section animation */
+.userpage-password-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.userpage-password-section.userpage-disabled {
+  opacity: 0.4;
+  filter: blur(0.5px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.userpage-password-section.userpage-disabled * {
+  cursor: not-allowed !important;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Password strength indicator */
+.userpage-strength-container {
+  margin-top: 0.5rem;
+}
+
+.userpage-strength-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.userpage-strength-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.userpage-strength-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.userpage-progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.userpage-progress-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Validation messages */
+.userpage-error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.userpage-success-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #10b981;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Submit button */
+.userpage-submit-button {
+  /*background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);*/
+  background-color: #FFBF00;
+  color: white;
+  border: none;
+  padding: 0.875rem 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  /*box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);*/
+}
+
+.userpage-submit-button:hover:not(:disabled) {
+  /*transform: translateY(-2px);*/
+  /*box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);*/
+}
+
+.userpage-submit-button:disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.userpage-submit-button.userpage-loading {
+  pointer-events: none;
+}
+
+/* Loading spinner */
+.userpage-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: userpage-spin 1s linear infinite;
+}
+
+@keyframes userpage-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
