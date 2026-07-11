@@ -1,6 +1,18 @@
 -- =====================================================================
---  Note-Taking-WebApp-10pshine — PostgreSQL Database Schema
+--  Note-Taking-WebApp-10pshine — PostgreSQL / Supabase Database Schema
 -- =====================================================================
+--
+-- SUPABASE SETUP INSTRUCTIONS
+-- ===========================
+-- 1. Create a new project at https://supabase.com
+-- 2. Go to SQL Editor in your Supabase project dashboard
+-- 3. Paste and run this entire file
+-- 4. The pg_trgm extension (used for ILIKE search) is enabled below automatically.
+--    If it fails, go to Database → Extensions and enable "pg_trgm" manually.
+-- 5. Copy your connection string from:
+--    Settings → Database → Connection string → Transaction pooler (port 6543)
+--    and set it as DATABASE_URL in your Vercel environment variables.
+--
 BEGIN;
 
 -- Enables faster ILIKE '%keyword%' search used by the notes dashboard
