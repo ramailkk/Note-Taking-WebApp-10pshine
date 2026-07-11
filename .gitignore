@@ -5,6 +5,11 @@
 
 # Environment files
 **/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+# .env.example is intentionally NOT ignored — it's safe to commit
 
 # System files
 .DS_Store
