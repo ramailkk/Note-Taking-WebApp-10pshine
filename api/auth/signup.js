@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     const verificationUrl = `${appUrl}/api/auth/verify/${verificationToken}`;
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: 'onboarding@resend.dev',
       to: email,
       subject: 'Verify your email',
       html: `
