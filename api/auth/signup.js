@@ -3,11 +3,8 @@ const crypto = require('crypto');
 const userModel = require('../_lib/userModel');
 const generateToken = require('../_lib/jwt');
 const transporter = require('../_lib/mail');
-const applyCors = require('../_lib/cors');
 
 export default async function handler(req, res) {
-  if (applyCors(req, res)) return;
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -34,17 +31,12 @@ export default async function handler(req, res) {
 
     const newUser = await userModel.createUser(username, email, hashedPassword, verificationToken);
 
-    // Build verification URL. IMPORTANT: set APP_URL in Vercel's Environment
-    // Variables (Production AND Preview) to your stable domain, e.g.
-    // https://note-taking-web-app-10pshine.vercel.app
-    // VERCEL_URL is only a fallback — it points at the unique URL of
-    // *this specific deployment* and changes every time you deploy, so
-    // relying on it alone can send verification links to a stale build.
+    // Build verification URL — uses APP_URL env var set in Vercel (your deployment domain)
     const appUrl = process.env.APP_URL || `https://${process.env.VERCEL_URL}`;
     const verificationUrl = `${appUrl}/api/auth/verify/${verificationToken}`;
 
     const mailOptions = {
-      from: 'onboarding@resend.dev',
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Verify your email',
       html: `
