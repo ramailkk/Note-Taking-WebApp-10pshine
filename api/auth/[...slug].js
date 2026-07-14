@@ -12,6 +12,8 @@ const logger = require('../_lib/logger');
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
+
+  console.log('DEBUG slug:', req.query.slug, 'method:', req.method); // temporary
   const slug = req.query.slug || [];
   const [action, param] = slug;
 
