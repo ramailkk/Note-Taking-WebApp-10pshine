@@ -4,6 +4,7 @@ const userModel = require('../_lib/userModel');
 const generateToken = require('../_lib/jwt');
 const { sendMail } = require('../_lib/mail');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
 // Consolidated into one function (Vercel Hobby plan caps at 12 functions
@@ -12,9 +13,7 @@ const logger = require('../_lib/logger');
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-
-  console.log('DEBUG slug:', req.query.slug, 'method:', req.method); // temporary
-  const slug = req.query.slug || [];
+  const slug = getSlug(req, '/api/auth');
   const [action, param] = slug;
 
   if (action === 'signup' && req.method === 'POST') return signup(req, res);

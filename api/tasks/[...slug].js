@@ -1,6 +1,7 @@
 const tasksModel = require('../_lib/tasksModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 
 // Handles /api/tasks/all (DELETE) and /api/tasks/:id (PATCH, DELETE).
 // A request with zero extra segments (/api/tasks) never reaches this file —
@@ -11,7 +12,7 @@ export default async function handler(req, res) {
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = req.query.slug || [];
+  const slug = getSlug(req, '/api/tasks');
   const [first] = slug;
 
   if (first === 'all' && req.method === 'DELETE') {

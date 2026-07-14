@@ -1,6 +1,7 @@
 const notebooksModel = require('../_lib/notebooksModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
 // Handles /api/notebooks/:id (PUT, DELETE) and /api/notebooks/:id/notes (GET).
@@ -10,7 +11,7 @@ export default async function handler(req, res) {
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = req.query.slug || [];
+  const slug = getSlug(req, '/api/notebooks');
   const [id, second] = slug;
 
   if (slug.length === 2 && second === 'notes' && req.method === 'GET') {

@@ -4,6 +4,7 @@ const tasksModel = require('../_lib/tasksModel');
 const userModel = require('../_lib/userModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
 export default async function handler(req, res) {
@@ -15,7 +16,7 @@ export default async function handler(req, res) {
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = req.query.slug || [];
+  const slug = getSlug(req, '/api/note-actions');
   const [action, param] = slug;
 
   if (action === 'highlight' && param) return highlight(req, res, user, param);

@@ -2,12 +2,13 @@ const bcrypt = require('bcryptjs');
 const userModel = require('../_lib/userModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-  const slug = req.query.slug || [];
+  const slug = getSlug(req, '/api/user');
   const [action] = slug;
   const method = req.method;
 
