@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = getSlug(req, '/api/note-actions');
+  const slug = getSlug(req);
   const [action, param] = slug;
 
   if (action === 'highlight' && param) return highlight(req, res, user, param);

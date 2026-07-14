@@ -1,16 +1,14 @@
-// Vercel's automatic array-ification of catch-all params under a clean
-// `req.query.slug` key is a Next.js convention, not a platform guarantee.
-// On a plain ("Other framework") Vercel project it can come through as a
-// literal `...slug` query key instead, which silently breaks any code that
-// assumes `req.query.slug` is populated. Parsing req.url directly sidesteps
-// that entirely — it's just string splitting, not dependent on any
-// framework-specific query-param magic.
-function getSlug(req, basePath) {
-  const pathname = req.url.split('?')[0];
-  const prefix = basePath.endsWith('/') ? basePath : basePath + '/';
-  let rest = pathname.startsWith(prefix) ? pathname.slice(prefix.length) : '';
-  rest = rest.replace(/^\/+|\/+$/g, '');
-  if (!rest) return [];
-  return rest.split('/').map((s) => decodeURIComponent(s));
+// Path segments now arrive as an explicit `slugpath` query param, set by a
+// vercel.json rewrite (?slugpath=:path*) rather than relying on Vercel's
+// filesystem-based [...slug].js dynamic-segment matching, which turned out
+// to behave unreliably for multi-segment paths on this ("Other framework")
+// project type. This is just string splitting on a value Vercel guarantees
+// via standard rewrite-destination interpolation — no framework-specific
+// routing magic involved.
+function getSlug(req) {
+  const raw = req.query.slugpath;
+  if (!raw) return [];
+  const str = Array.isArray(raw) ? raw.join('/') : raw;
+  return str.split('/').filter(Boolean).map((s) => decodeURIComponent(s));
 }
 module.exports = getSlug;

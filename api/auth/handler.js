@@ -13,7 +13,7 @@ const logger = require('../_lib/logger');
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-  const slug = getSlug(req, '/api/auth');
+  const slug = getSlug(req);
   const [action, param] = slug;
 
   if (action === 'signup' && req.method === 'POST') return signup(req, res);

@@ -4,16 +4,43 @@ const applyCors = require('../_lib/cors');
 const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
-// Handles /api/notebooks/:id (PUT, DELETE) and /api/notebooks/:id/notes (GET).
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = getSlug(req, '/api/notebooks');
+  const slug = getSlug(req);
+
+  // Bare /api/notebooks
+  if (slug.length === 0) {
+    if (req.method === 'GET') {
+      try {
+        const notebooks = await notebooksModel.getAllNotebooks(user.userId);
+        logger.info({ userId: user.userId, count: notebooks.length }, 'Fetched all notebooks');
+        return res.status(200).json({ notebooks });
+      } catch (error) {
+        logger.error({ error, userId: user.userId }, 'Error fetching notebooks');
+        return res.status(500).json({ error: 'Failed to fetch notebooks' });
+      }
+    }
+    if (req.method === 'POST') {
+      try {
+        const { notebookName } = req.body;
+        const notebook = await notebooksModel.createNotebook(user.userId, notebookName || 'New Notebook');
+        logger.info({ userId: user.userId, notebookId: notebook.id }, 'Created new notebook');
+        return res.status(201).json({ notebook });
+      } catch (error) {
+        logger.error({ error, userId: user.userId }, 'Error creating notebook');
+        return res.status(500).json({ error: 'Failed to create notebook' });
+      }
+    }
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   const [id, second] = slug;
 
+  // /api/notebooks/:id/notes
   if (slug.length === 2 && second === 'notes' && req.method === 'GET') {
     try {
       const notebook = await notebooksModel.getNotebookWithNotes(id, user.userId);
@@ -26,6 +53,7 @@ export default async function handler(req, res) {
     }
   }
 
+  // /api/notebooks/:id
   if (slug.length === 1) {
     if (req.method === 'PUT') {
       try {

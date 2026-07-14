@@ -3,18 +3,46 @@ const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
 const getSlug = require('../_lib/getSlug');
 
-// Handles /api/tasks/all (DELETE) and /api/tasks/:id (PATCH, DELETE).
-// A request with zero extra segments (/api/tasks) never reaches this file —
-// Vercel routes it to the literal index.js in this same folder instead.
+// Everything under /api/tasks/* funnels here via vercel.json's rewrite.
+// slug.length === 0 means the bare /api/tasks path.
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const slug = getSlug(req, '/api/tasks');
+  const slug = getSlug(req);
+
+  // Bare /api/tasks
+  if (slug.length === 0) {
+    if (req.method === 'GET') {
+      try {
+        const tasks = await tasksModel.getAllTasks(user.userId);
+        return res.status(200).json({ tasks });
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        return res.status(500).json({ error: 'Failed to fetch tasks' });
+      }
+    }
+    if (req.method === 'POST') {
+      try {
+        const { taskText } = req.body;
+        if (!taskText || taskText.trim() === '') {
+          return res.status(400).json({ error: 'Task text is required' });
+        }
+        const task = await tasksModel.createTask(user.userId, taskText.trim());
+        return res.status(201).json({ task });
+      } catch (error) {
+        console.error('Error creating task:', error);
+        return res.status(500).json({ error: 'Failed to create task' });
+      }
+    }
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   const [first] = slug;
 
+  // /api/tasks/all
   if (first === 'all' && req.method === 'DELETE') {
     try {
       const deletedCount = await tasksModel.deleteAllTasks(user.userId);
@@ -25,7 +53,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // Anything else with exactly one segment is treated as a task id.
+  // /api/tasks/:id
   if (slug.length === 1) {
     const id = first;
 

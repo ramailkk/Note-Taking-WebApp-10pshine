@@ -9,7 +9,7 @@ const logger = require('../_lib/logger');
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-  const slug = getSlug(req, '/api/note');
+  const slug = getSlug(req);
   const [action, param] = slug;
   const method = req.method;
 

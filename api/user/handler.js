@@ -8,7 +8,7 @@ const logger = require('../_lib/logger');
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-  const slug = getSlug(req, '/api/user');
+  const slug = getSlug(req);
   const [action] = slug;
   const method = req.method;
 
