@@ -1,84 +1,49 @@
 const notesModel = require('../_lib/notesModel');
 const notebooksModel = require('../_lib/notebooksModel');
-const tasksModel = require('../_lib/tasksModel');
 const userModel = require('../_lib/userModel');
+const tasksModel = require('../_lib/tasksModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
-const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
-export default async function handler(req, res) {
-  if (applyCors(req, res)) return;
+// Consolidated router for /api/note-actions/*.
+// Combines what used to be 4 separate files (create-tasks, divide/[noteId],
+// extract-tasks, highlight/[noteId]) into a single serverless function so
+// the deployment stays under Vercel's Hobby-plan function limit.
+
+async function createTasks(req, res, user) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const user = verifyToken(req, res);
-  if (!user) return;
+  const { tasks } = req.body;
 
-  const slug = getSlug(req);
-  const [action, param] = slug;
+  if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
+    return res.status(400).json({ error: 'No tasks provided' });
+  }
 
-  if (action === 'highlight' && param) return highlight(req, res, user, param);
-  if (action === 'divide' && param) return divide(req, res, user, param);
-  if (action === 'extract-tasks') return extractTasks(req, res, user);
-  if (action === 'create-tasks') return createTasks(req, res, user);
-
-  return res.status(404).json({ error: 'Not found' });
-}
-
-async function highlight(req, res, user, noteId) {
   try {
-    const note = await notesModel.LoadHTMLByNoteID(noteId, user.userId);
-    if (!note) return res.status(404).json({ error: 'Note not found' });
-    if (note.is_protected) return res.status(400).json({ error: 'Cannot analyze protected notes' });
-
-    const cleanContent = note.content_html ? note.content_html.replace(/<[^>]*>/g, ' ').trim() : '';
-    if (!cleanContent || cleanContent.length < 10) {
-      return res.status(400).json({ error: 'Note content is too short to analyze' });
+    const createdTasks = [];
+    for (const task of tasks) {
+      if (task.text && task.text.trim()) {
+        const newTask = await tasksModel.createTask(user.userId, task.text.trim());
+        createdTasks.push(newTask);
+      }
     }
-
-    const { GoogleGenerativeAI } = require('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
-
-    const prompt = `Analyze this text and identify the most important phrases/sentences that should be highlighted.
-
-Text:
-${cleanContent}
-
-Return ONLY a valid JSON array of objects with the exact text to highlight. Maximum 10 items.
-Format: [{"text": "exact phrase to highlight", "color": "#ffeb3b"}, ...]
-
-Rules:
-- Use EXACT text from the document (must match character-for-character)
-- Highlight key facts, important terms, conclusions, or action items
-- Use yellow (#ffeb3b) for general highlights
-- Use green (#a5d6a7) for positive/success items
-- Use red (#ef9a9a) for warnings/important alerts
-- Keep each highlight under 100 characters`;
-
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-
-    let highlights = [];
-    try {
-      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
-      if (jsonMatch) highlights = JSON.parse(jsonMatch[0]);
-    } catch (parseErr) {
-      logger.warn({ parseErr }, 'Failed to parse highlight suggestions');
-      return res.status(500).json({ error: 'Failed to parse AI response' });
-    }
-
-    logger.info({ userId: user.userId, noteId, highlightCount: highlights.length }, 'Generated highlight suggestions');
-    return res.status(200).json({ highlights });
+    logger.info({ userId: user.userId, count: createdTasks.length }, 'Created tasks from extraction');
+    return res.status(200).json({ message: `Created ${createdTasks.length} task(s)`, tasks: createdTasks });
   } catch (err) {
-    logger.error({ err, userId: user.userId, noteId }, 'Error getting highlight suggestions');
-    return res.status(500).json({ error: 'Failed to analyze note' });
+    logger.error({ err, userId: user.userId }, 'Error creating extracted tasks');
+    return res.status(500).json({ error: 'Failed to create tasks' });
   }
 }
 
+// AI-assisted version: asks Gemini to suggest how to split the note before creating anything.
 async function divide(req, res, user, noteId) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const note = await notesModel.LoadHTMLByNoteID(noteId, user.userId);
     if (!note) return res.status(404).json({ error: 'Note not found' });
@@ -153,7 +118,10 @@ Rules:
     await userModel.clearGraphMetadata(user.userId);
 
     logger.info({
-      userId: user.userId, originalNoteId: noteId, notebookId: newNotebook.id, notesCreated: createdNotes.length,
+      userId: user.userId,
+      originalNoteId: noteId,
+      notebookId: newNotebook.id,
+      notesCreated: createdNotes.length,
     }, 'Note divided successfully via toolbar action');
 
     return res.status(200).json({
@@ -168,6 +136,10 @@ Rules:
 }
 
 async function extractTasks(req, res, user) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const notes = await notesModel.findAllNotesWithContentByUserID(user.userId);
     if (!notes || notes.length === 0) {
@@ -254,23 +226,75 @@ Rules:
   }
 }
 
-async function createTasks(req, res, user) {
-  const { tasks } = req.body;
-  if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
-    return res.status(400).json({ error: 'No tasks provided' });
+async function highlight(req, res, user, noteId) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
+
   try {
-    const createdTasks = [];
-    for (const task of tasks) {
-      if (task.text && task.text.trim()) {
-        const newTask = await tasksModel.createTask(user.userId, task.text.trim());
-        createdTasks.push(newTask);
-      }
+    const note = await notesModel.LoadHTMLByNoteID(noteId, user.userId);
+    if (!note) return res.status(404).json({ error: 'Note not found' });
+    if (note.is_protected) return res.status(400).json({ error: 'Cannot analyze protected notes' });
+
+    const cleanContent = note.content_html ? note.content_html.replace(/<[^>]*>/g, ' ').trim() : '';
+    if (!cleanContent || cleanContent.length < 10) {
+      return res.status(400).json({ error: 'Note content is too short to analyze' });
     }
-    logger.info({ userId: user.userId, count: createdTasks.length }, 'Created tasks from extraction');
-    return res.status(200).json({ message: `Created ${createdTasks.length} task(s)`, tasks: createdTasks });
+
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
+
+    const prompt = `Analyze this text and identify the most important phrases/sentences that should be highlighted.
+
+Text:
+${cleanContent}
+
+Return ONLY a valid JSON array of objects with the exact text to highlight. Maximum 10 items.
+Format: [{"text": "exact phrase to highlight", "color": "#ffeb3b"}, ...]
+
+Rules:
+- Use EXACT text from the document (must match character-for-character)
+- Highlight key facts, important terms, conclusions, or action items
+- Use yellow (#ffeb3b) for general highlights
+- Use green (#a5d6a7) for positive/success items
+- Use red (#ef9a9a) for warnings/important alerts
+- Keep each highlight under 100 characters`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+
+    let highlights = [];
+    try {
+      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+      if (jsonMatch) highlights = JSON.parse(jsonMatch[0]);
+    } catch (parseErr) {
+      logger.warn({ parseErr }, 'Failed to parse highlight suggestions');
+      return res.status(500).json({ error: 'Failed to parse AI response' });
+    }
+
+    logger.info({ userId: user.userId, noteId, highlightCount: highlights.length }, 'Generated highlight suggestions');
+    return res.status(200).json({ highlights });
   } catch (err) {
-    logger.error({ err, userId: user.userId }, 'Error creating extracted tasks');
-    return res.status(500).json({ error: 'Failed to create tasks' });
+    logger.error({ err, userId: user.userId, noteId }, 'Error getting highlight suggestions');
+    return res.status(500).json({ error: 'Failed to analyze note' });
   }
+}
+
+export default async function handler(req, res) {
+  if (applyCors(req, res)) return;
+
+  const user = verifyToken(req, res);
+  if (!user) return;
+
+  const rawSlug = req.query.slug;
+  const slug = rawSlug == null ? [] : Array.isArray(rawSlug) ? rawSlug : [rawSlug];
+  const [first, second] = slug;
+
+  if (first === 'create-tasks') return createTasks(req, res, user);
+  if (first === 'divide' && second) return divide(req, res, user, second);
+  if (first === 'extract-tasks') return extractTasks(req, res, user);
+  if (first === 'highlight' && second) return highlight(req, res, user, second);
+
+  return res.status(404).json({ error: 'Not found' });
 }
