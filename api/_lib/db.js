@@ -1,22 +1,19 @@
 const { Pool } = require('pg');
 
-// Supabase provides a connection string — use the "Transaction" pooler (port 6543)
-// for serverless environments to avoid connection exhaustion.
-// Set DATABASE_URL in your Vercel project environment variables.
-
+// Reuse the pool across warm serverless invocations. Point DATABASE_URL at
+// Supabase's transaction pooler (port 6543), not the direct connection —
+// serverless functions open a connection per invocation and will exhaust a
+// direct-connection limit fast.
 let pool;
-
 function getPool() {
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }, // required for Supabase
-      max: 1,                              // keep connections low in serverless
-      idleTimeoutMillis: 10000,
-      connectionTimeoutMillis: 5000,
+      ssl: { rejectUnauthorized: false },
+      max: 1,
     });
   }
   return pool;
 }
 
-module.exports = getPool;
+module.exports = { getPool };

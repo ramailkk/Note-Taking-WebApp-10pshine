@@ -13,22 +13,21 @@ export default async function handler(req, res) {
   if (!user) return;
 
   const { noteId } = req.query;
-  const { ContentHTML } = req.body;
+  const { notebookId } = req.body;
 
-  if (!ContentHTML) {
-    return res.status(400).json({ error: 'Missing HTML content in request body.' });
+  if (!notebookId) {
+    return res.status(400).json({ error: 'Notebook ID is required' });
   }
 
   try {
-    const updatedNote = await notesModel.SaveHTMLInNoteID(ContentHTML, noteId, user.userId);
+    const updatedNote = await notesModel.moveNoteToNotebook(noteId, user.userId, notebookId);
     if (!updatedNote) {
-      logger.warn({ noteId, userId: user.userId }, 'Note not found when updating content');
       return res.status(404).json({ error: 'Note not found' });
     }
-    logger.info({ noteId, userId: user.userId }, 'Note content updated successfully');
-    return res.status(200).json({ message: 'Note content updated successfully.' });
+    logger.info({ noteId, userId: user.userId, notebookId }, 'Note moved to different notebook');
+    return res.status(200).json({ note: updatedNote });
   } catch (err) {
-    logger.error({ err, noteId, userId: user.userId }, 'Error updating note content');
+    logger.error({ err, noteId, userId: user.userId }, 'Error moving note to notebook');
     return res.status(500).json({ error: 'Internal server error.' });
   }
 }

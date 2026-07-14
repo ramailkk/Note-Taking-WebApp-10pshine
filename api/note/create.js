@@ -1,10 +1,10 @@
 const notesModel = require('../_lib/notesModel');
 const verifyToken = require('../_lib/middleware');
 const applyCors = require('../_lib/cors');
+const logger = require('../_lib/logger');
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -12,19 +12,21 @@ export default async function handler(req, res) {
   const user = verifyToken(req, res);
   if (!user) return;
 
-  const userId = user.userId;
+  const { notebookId } = req.body || {};
 
   try {
-    const createNote = await notesModel.CreateNote(userId);
-
-    return res.status(200).json({
-      id: createNote.id,
-      note_name: createNote.note_name,
-      updated_at: createNote.updated_at,
-      created_at: createNote.created_at,
-    });
+    const created = await notesModel.CreateNote(user.userId, notebookId);
+    const note = {
+      id: created.id,
+      note_name: created.note_name,
+      updated_at: created.updated_at,
+      created_at: created.created_at,
+      notebook_id: created.notebook_id,
+    };
+    logger.info({ noteId: note.id, userId: user.userId, notebookId }, 'Note created');
+    return res.status(200).json(note);
   } catch (err) {
-    console.error('Error creating note:', err);
+    logger.error({ err, userId: user.userId }, 'Error creating new note');
     return res.status(500).json({ error: 'Internal server error.' });
   }
 }

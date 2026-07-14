@@ -1,11 +1,11 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const userModel = require('../_lib/userModel');
 const generateToken = require('../_lib/jwt');
 const applyCors = require('../_lib/cors');
+const logger = require('../_lib/logger');
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -32,21 +32,17 @@ export default async function handler(req, res) {
     }
 
     await userModel.updateLastLogin(user.id);
-
     const token = generateToken(user.id);
+
+    logger.info({ userId: user.id }, 'Login successful');
 
     return res.status(200).json({
       message: 'Login successful',
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-      },
+      user: { id: user.id, username: user.username, email: user.email, role: user.role },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error({ err: error }, 'Login error');
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

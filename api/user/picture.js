@@ -5,23 +5,25 @@ const logger = require('../_lib/logger');
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
-  if (req.method !== 'GET') {
+  if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const user = verifyToken(req, res);
   if (!user) return;
 
+  const { profilePicture } = req.body;
+  const userId = user.userId;
+
   try {
-    const getUser = await userModel.findUserByUserId(user.userId);
-    if (!getUser) {
-      logger.warn({ userId: user.userId }, 'User not found');
-      return res.status(404).json({ error: 'User not found' });
+    if (!profilePicture) {
+      return res.status(400).json({ error: 'Profile picture is required.' });
     }
-    logger.info({ userId: user.userId }, 'Fetched user info successfully');
-    return res.status(200).json(getUser);
+    await userModel.updateProfilePicture(userId, profilePicture);
+    logger.info({ userId }, 'Profile picture updated');
+    return res.status(200).json({ message: 'Profile picture updated successfully.' });
   } catch (err) {
-    logger.error({ err, userId: user.userId }, 'Error fetching user info');
+    logger.error({ err, userId }, 'Error updating profile picture');
     return res.status(500).json({ error: 'Internal server error.' });
   }
 }

@@ -6,12 +6,23 @@ const { sendMail } = require('../_lib/mail');
 const applyCors = require('../_lib/cors');
 const logger = require('../_lib/logger');
 
+// Consolidated into one function (Vercel Hobby plan caps at 12 functions
+// per deployment). Routes on [action, param] parsed from the catch-all
+// segment, the same way the old Express router dispatched by path.
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
 
+  const slug = req.query.slug || [];
+  const [action, param] = slug;
+
+  if (action === 'signup' && req.method === 'POST') return signup(req, res);
+  if (action === 'login' && req.method === 'POST') return login(req, res);
+  if (action === 'verify' && req.method === 'GET') return verifyEmail(req, res, param);
+
+  return res.status(404).json({ error: 'Not found' });
+}
+
+async function signup(req, res) {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -34,9 +45,6 @@ export default async function handler(req, res) {
 
     const newUser = await userModel.createUser(username, email, hashedPassword, token);
 
-    // IMPORTANT: set APP_URL in Vercel's env vars (Production AND Preview)
-    // to your stable domain. VERCEL_URL is only a fallback — it's the
-    // per-deployment URL and changes every deploy.
     const appUrl = process.env.APP_URL || `https://${process.env.VERCEL_URL}`;
     const verificationUrl = `${appUrl}/api/auth/verify/${token}`;
 
@@ -70,7 +78,6 @@ export default async function handler(req, res) {
     };
 
     await sendMail(mailOptions);
-
     logger.info({ userId: newUser.id, email }, 'New user signed up and verification email sent');
 
     return res.status(201).json({
@@ -80,5 +87,56 @@ export default async function handler(req, res) {
   } catch (error) {
     logger.error({ err: error }, 'Signup error');
     return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function login(req, res) {
+  const { usernameOrEmail, password } = req.body;
+
+  if (!usernameOrEmail || !password) {
+    return res.status(400).json({ error: 'Username/email and password are required.' });
+  }
+
+  try {
+    const user = await userModel.findUserByUsernameOrEmail(usernameOrEmail);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
+    if (!user.is_verified) {
+      return res.status(403).json({ error: 'Email not verified.' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Wrong Password' });
+    }
+
+    await userModel.updateLastLogin(user.id);
+    const token = generateToken(user.id);
+    logger.info({ userId: user.id }, 'Login successful');
+
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: { id: user.id, username: user.username, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    logger.error({ err: error }, 'Login error');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function verifyEmail(req, res, token) {
+  try {
+    const user = await userModel.findUserByVerificationToken(token);
+    if (!user) {
+      return res.status(400).send('<h2>Invalid or expired verification link.</h2>');
+    }
+    await userModel.markUserAsVerified(user.id);
+    logger.info({ userId: user.id }, 'Email verified successfully');
+    return res.status(200).send('<h2>Email verified successfully! You can now log in.</h2>');
+  } catch (err) {
+    logger.error({ err }, 'Email verification error');
+    return res.status(500).send('<h2>Something went wrong. Please try again.</h2>');
   }
 }
