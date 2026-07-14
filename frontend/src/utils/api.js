@@ -1,12 +1,10 @@
 // utils/api.js
 import axios from "axios";
+import { API_BASE_URL } from "../App/config";
 
-// In production (Vercel), the frontend and API share the same domain,
-// so /api is a relative path. For local dev, set REACT_APP_API_BASE_URL
-// in frontend/.env.local to http://localhost:5000
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "/api",
-  withCredentials: true,
+  baseURL: API_BASE_URL,
+  withCredentials: true, // send cookies like refreshToken
 });
 
 // Token stored in memory or localStorage
@@ -31,7 +29,7 @@ api.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          "http://localhost:5000/auth/refresh",
+          `${API_BASE_URL}/auth/refresh`,
           {},
           { withCredentials: true }
         );

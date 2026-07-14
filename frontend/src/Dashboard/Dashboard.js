@@ -3,10 +3,10 @@ import Header from "./Header";
 import SearchBar from "./SearchBar";
 import FilterControls from "./FilterControls";
 import NotesGrid from "./NotesGrid";
+import NotesGraph from "./NotesGraph";
 import EmptyState from "./EmptyState";
 import Pagination from "./Pagination";
 import { API_BASE_URL } from "../App/config.js";
-import { useSide } from "../Components/SidebarContext";
 import "./styles.css";
 
 const Dashboard = ({
@@ -34,8 +34,11 @@ const Dashboard = ({
     fontFamily: "sans-serif",
   },
 }) => {
-  const [username, setUsername] = useState(); 
+  const [username, setUsername] = useState();
   const [notes, setNotes] = useState([]);
+  const [graphData, setGraphData] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'graph'
+  const [isLoadingGraph, setIsLoadingGraph] = useState(false);
   const token = localStorage.getItem("token");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("updated_at");
@@ -47,9 +50,8 @@ const Dashboard = ({
 
 
 
-
   const fetchNotes = useCallback(async () => {
-    try { 
+    try {
 
       const queryParams = new URLSearchParams({
         page: currentPage,
@@ -76,16 +78,56 @@ const Dashboard = ({
     } catch (err) {
       console.error("Error fetching notes", err);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, sortBy, sortOrder, currentPage, limit]);
+
+  const fetchGraphData = useCallback(async (force = false) => {
+    setIsLoadingGraph(true);
+    try {
+      const url = force
+        ? `${API_BASE_URL}/note/graph?forceRegenerate=true`
+        : `${API_BASE_URL}/note/graph`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setGraphData(data);
+      } else {
+        console.error("Failed to fetch graph data", data.error);
+      }
+    } catch (err) {
+      console.error("Error fetching graph data", err);
+    } finally {
+      setIsLoadingGraph(false);
+    }
+  }, [token]);
 
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
 
+  // Only fetch graph data once when first switching to graph view
+  useEffect(() => {
+    if (viewMode === 'graph' && !graphData) {
+      fetchGraphData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode]); // Removed fetchGraphData dependency to prevent re-fetching
+
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1); // Reset to first page
   }, []);
+
+  const handleRegenerateGraph = () => {
+    fetchGraphData(true); // Force regeneration
+  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -111,38 +153,59 @@ const Dashboard = ({
 
   return (
     <div className="notes-dashboard">
-      <Header userName={username} />
+      <Header userName={username} viewMode={viewMode} setViewMode={setViewMode} />
 
-      <div className="search-container">
-        <SearchBar
-          searchTerm={searchTerm}
-          handleSearchChange={handleSearchChange}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-        />
-
-        <FilterControls
-          showFilters={showFilters}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-        />
-      </div>
-
-      {notes.length > 0 ? (
+      {viewMode === 'grid' && (
         <>
-          <NotesGrid filteredAndSortedNotes={notes} gridGap={gridGap} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          <div className="search-container">
+            <SearchBar
+              searchTerm={searchTerm}
+              handleSearchChange={handleSearchChange}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+            />
+
+            <FilterControls
+              showFilters={showFilters}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
+
+          {notes.length > 0 ? (
+            <>
+              <NotesGrid filteredAndSortedNotes={notes} gridGap={gridGap} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          ) : (
+            <EmptyState searchTerm={searchTerm} />
+          )}
         </>
-      ) : (
-        <EmptyState searchTerm={searchTerm} />
+      )}
+
+      {viewMode === 'graph' && (
+        <div className="graph-view-container">
+          {isLoadingGraph ? (
+            <div className="graph-loading">
+              <div className="loading-spinner"></div>
+              <p>Analyzing note relationships with AI...</p>
+            </div>
+          ) : (
+            <NotesGraph
+              graphData={graphData}
+              onRegenerate={handleRegenerateGraph}
+              isLoading={isLoadingGraph}
+            />
+          )}
+        </div>
       )}
     </div>
   );

@@ -5,6 +5,9 @@ import {
   FaHome,
   FaStickyNote,
   FaSignOutAlt,
+  FaTasks,
+  FaBook,
+  FaCog
 } from "react-icons/fa";
 import { FaScroll } from "react-icons/fa";
 import "./sidebar.css";
@@ -14,7 +17,7 @@ import { API_BASE_URL } from "../App/config.js";
 
 function Sidebar() {
 
-  const {activeSection, setActiveSection} = useSide();
+  const { activeSection, setActiveSection } = useSide();
 
   useEffect(() => {
     localStorage.setItem("activeSection", activeSection);
@@ -23,6 +26,7 @@ function Sidebar() {
   const navigate = useNavigate();
   const { token, logout } = useAuth();
   const [username, setUsername] = useState("");
+  const [profilePic, setProfilePic] = useState(null);
 
   const handleLogout = () => {
     logout();
@@ -49,6 +53,9 @@ function Sidebar() {
         const data = await response.json();
 
         setUsername(data.username);
+        if (data.profile_picture) {
+          setProfilePic(data.profile_picture);
+        }
       } catch (err) {
         console.error("Error loading user info:", err);
       }
@@ -67,9 +74,13 @@ function Sidebar() {
 
       <div className="sidebar-content">
         {/* User Profile Section */}
-        <div className="user-profile" onClick={() => navigate("/user")}>
+        <div className="user-profile" onClick={() => navigate("/settings")}>
           <div className="avatar-container">
-            <FaUserCircle className="user-avatar" />
+            {profilePic ? (
+              <img src={profilePic} alt="Profile" className="user-avatar-img" />
+            ) : (
+              <FaUserCircle className="user-avatar" />
+            )}
           </div>
           <div className="user-info">
             <div className="user-name">{username}</div>
@@ -101,6 +112,42 @@ function Sidebar() {
                 <span>Notes</span>
               </div>
               {activeSection === "notes" && (
+                <div className="active-indicator"></div>
+              )}
+            </li>
+            <li
+              className={`nav-item ${activeSection === "notebooks" ? "active" : ""}`}
+              onClick={() => handleNavigation("notebooks")}
+            >
+              <div className="nav-item-content">
+                <FaBook className="nav-icon" />
+                <span>Notebooks</span>
+              </div>
+              {activeSection === "notebooks" && (
+                <div className="active-indicator"></div>
+              )}
+            </li>
+            <li
+              className={`nav-item ${activeSection === "tasks" ? "active" : ""}`}
+              onClick={() => handleNavigation("tasks")}
+            >
+              <div className="nav-item-content">
+                <FaTasks className="nav-icon" />
+                <span>Tasks</span>
+              </div>
+              {activeSection === "tasks" && (
+                <div className="active-indicator"></div>
+              )}
+            </li>
+            <li
+              className={`nav-item ${activeSection === "settings" ? "active" : ""}`}
+              onClick={() => handleNavigation("settings")}
+            >
+              <div className="nav-item-content">
+                <FaCog className="nav-icon" />
+                <span>Settings</span>
+              </div>
+              {activeSection === "settings" && (
                 <div className="active-indicator"></div>
               )}
             </li>

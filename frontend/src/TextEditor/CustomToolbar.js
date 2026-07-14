@@ -2,10 +2,11 @@ import React from "react";
 import "./CustomToolbar.css";
 import FontDropdown from "./FontDropdown.js";
 import FontSizeDropdown from "./FontSizeDropdown.js";
+
 const CustomToolbar = ({ quill }) => {
   return (
-    <div id="custom-toolbar" className="custom-toolbar-expanded">
-      {/*  Undo/Redo */}
+    <div id="custom-toolbar" className="custom-toolbar-expanded">{
+      /*  Undo/Redo */}
       <div className="toolbar-group">
         <button className="ql-undo">↶</button>
         <button className="ql-redo">↷</button>

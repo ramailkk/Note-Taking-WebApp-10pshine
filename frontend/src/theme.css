@@ -1,0 +1,125 @@
+/* ===================================
+   THEME VARIABLES - Dark Mode Support
+   =================================== */
+
+:root {
+    /* Light Mode Colors (Default) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #fafafa;
+    --bg-card: #ffffff;
+    --bg-hover: #f9fafb;
+    --bg-active: #f5f3ff;
+
+    /* Text Colors */
+    --text-primary: #111827;
+    --text-secondary: #666666;
+    --text-muted: #9E9E9E;
+    --text-heading: #333333;
+
+    /* Border Colors */
+    --border-color: #e5e7eb;
+    --border-light: #cccccc;
+    --border-input: #d1d5db;
+
+    /* Accent Colors */
+    --accent-primary: #FFBF00;
+    --accent-hover: #e6ac00;
+    --accent-light: rgba(255, 191, 0, 0.1);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.10);
+
+    /* Status Colors */
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+}
+
+/* ===================================
+   DARK MODE
+   =================================== */
+body.dark-mode {
+    /* Dark Mode Colors */
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #141414;
+    --bg-card: #1e1e1e;
+    --bg-hover: #252525;
+    --bg-active: #2a2a2a;
+
+    /* Text Colors - High contrast */
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-muted: #707070;
+    --text-heading: #ffffff;
+
+    /* Border Colors */
+    --border-color: #2d2d2d;
+    --border-light: #3d3d3d;
+    --border-input: #404040;
+
+    /* Shadows - Subtle in dark mode */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ===================================
+   GLOBAL DARK MODE OVERRIDES
+   =================================== */
+body.dark-mode {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body.dark-mode * {
+    /* Ensure scrollbars are styled for dark mode */
+    scrollbar-color: #404040 #1a1a1a;
+}
+
+body.dark-mode ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 4px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #505050;
+}
+
+/* Input and Select overrides */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-input);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--text-muted);
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+}
+
+/* Button overrides */
+body.dark-mode button {
+    color: var(--text-primary);
+}

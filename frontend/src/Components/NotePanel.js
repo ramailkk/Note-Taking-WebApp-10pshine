@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   FaRegStickyNote,
   FaSortAlphaDown,
@@ -11,7 +12,6 @@ import "./NotePanel.css";
 import { API_BASE_URL } from "../App/config";
 import { useAuth } from "../Authentication/AuthContext";
 import { useNote } from "./NoteContext";
-import { useSide } from "./SidebarContext";
 // Format date as "x minutes/hours/days ago"
 const formatDate = (date) => {
   const parsedDate = new Date(date);
@@ -50,6 +50,7 @@ const sortNotes = (notes, sortOption) => {
 };
 
 function NotePanel() {
+  const location = useLocation();
   const [notes, setNotes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("latest");
@@ -64,15 +65,23 @@ function NotePanel() {
 
   const [loading, setLoading] = useState(true); // NEW
 
+  // Get notebookId from URL if present
+  const searchParams = new URLSearchParams(location.search);
+  const notebookId = searchParams.get('notebookId');
+
   useEffect(() => {
     const fetchNotes = async () => {
 
-      if (!notes.length) 
+      if (!notes.length)
         setLoading(true);
 
       try {
+        // If we have a notebookId, fetch notes for that notebook only
+        const url = notebookId
+          ? `${API_BASE_URL}/notebooks/${notebookId}/notes`
+          : `${API_BASE_URL}/note/all`;
 
-        const response = await fetch(`${API_BASE_URL}/note/all`, {
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -83,10 +92,13 @@ function NotePanel() {
         if (!response.ok) throw new Error("Failed to fetch notes");
 
         const data = await response.json();
-        setNotes(data);
 
-        if (!hasSelectedInitialNote && data.length > 0 && !selectedNoteId) {
-          const sortedData = sortNotes(data, sortOption);
+        // Extract notes array based on response structure
+        const notesArray = notebookId ? data.notebook.notes : data;
+        setNotes(notesArray);
+
+        if (!hasSelectedInitialNote && notesArray.length > 0 && !selectedNoteId) {
+          const sortedData = sortNotes(notesArray, sortOption);
           const firstNote = sortedData[0];
           setSelectedNoteId(firstNote.id);
           setSelectedNoteName(firstNote.note_name);
@@ -100,6 +112,7 @@ function NotePanel() {
     };
 
     fetchNotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     token,
     hasSelectedInitialNote,
@@ -107,7 +120,29 @@ function NotePanel() {
     setSelectedNoteName,
     refreshNotes,
     sortOption,
+    notebookId,
   ]);
+
+  // Handle events from bot actions (e.g., note divided)
+  useEffect(() => {
+    const handleNoteDeleted = () => {
+      setSelectedNoteId(null);
+      setSelectedNoteName('');
+      setHasSelectedInitialNote(false);
+    };
+
+    const handleNotesUpdated = () => {
+      setRefreshNotes(prev => !prev);
+    };
+
+    window.addEventListener('note-deleted', handleNoteDeleted);
+    window.addEventListener('notes-updated', handleNotesUpdated);
+
+    return () => {
+      window.removeEventListener('note-deleted', handleNoteDeleted);
+      window.removeEventListener('notes-updated', handleNotesUpdated);
+    };
+  }, [setSelectedNoteId, setSelectedNoteName, setRefreshNotes]);
 
   const handleNewNote = async () => {
     if (isCreatingNote) return;

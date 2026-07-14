@@ -1,30 +1,91 @@
 /* Font size classes for Quill (must match whitelist values) */
-.ql-size-10px { font-size: 10px; }
-.ql-size-12px { font-size: 12px; }
-.ql-size-14px { font-size: 14px; }
-.ql-size-16px { font-size: 16px; }
-.ql-size-18px { font-size: 18px; }
-.ql-size-24px { font-size: 24px; }
-.ql-size-32px { font-size: 32px; }
-.ql-size-48px { font-size: 48px; }
+.ql-size-10px {
+  font-size: 10px;
+}
+
+.ql-size-12px {
+  font-size: 12px;
+}
+
+.ql-size-14px {
+  font-size: 14px;
+}
+
+.ql-size-16px {
+  font-size: 16px;
+}
+
+.ql-size-18px {
+  font-size: 18px;
+}
+
+.ql-size-24px {
+  font-size: 24px;
+}
+
+.ql-size-32px {
+  font-size: 32px;
+}
+
+.ql-size-48px {
+  font-size: 48px;
+}
 
 /*Individual styling for all the fonts*/
-.ql-font-arial { font-family: Arial, sans-serif; }
-.ql-font-verdana { font-family: Verdana, sans-serif; }
-.ql-font-georgia { font-family: Georgia, serif; }
-.ql-font-courier-new { font-family: "Courier New", monospace; }
-.ql-font-times-new-roman { font-family: "Times New Roman", serif; }
-.ql-font-lucida { font-family: "Lucida Sans", sans-serif; }
-.ql-font-impact { font-family: Impact, sans-serif; }
-.ql-font-tahoma { font-family: Tahoma, sans-serif; }
-.ql-font-trebuchet { font-family: "Trebuchet MS", sans-serif; }
-.ql-font-palatino { font-family: "Palatino Linotype", serif; }
-.ql-font-monospace { font-family: monospace; }
-.ql-font-sans-serif { font-family: sans-serif; }
-.ql-font-serif { font-family: serif; }
+.ql-font-arial {
+  font-family: Arial, sans-serif;
+}
+
+.ql-font-verdana {
+  font-family: Verdana, sans-serif;
+}
+
+.ql-font-georgia {
+  font-family: Georgia, serif;
+}
+
+.ql-font-courier-new {
+  font-family: "Courier New", monospace;
+}
+
+.ql-font-times-new-roman {
+  font-family: "Times New Roman", serif;
+}
+
+.ql-font-lucida {
+  font-family: "Lucida Sans", sans-serif;
+}
+
+.ql-font-impact {
+  font-family: Impact, sans-serif;
+}
+
+.ql-font-tahoma {
+  font-family: Tahoma, sans-serif;
+}
+
+.ql-font-trebuchet {
+  font-family: "Trebuchet MS", sans-serif;
+}
+
+.ql-font-palatino {
+  font-family: "Palatino Linotype", serif;
+}
+
+.ql-font-monospace {
+  font-family: monospace;
+}
+
+.ql-font-sans-serif {
+  font-family: sans-serif;
+}
+
+.ql-font-serif {
+  font-family: serif;
+}
 
 
-/* Optional: style font & size dropdowns to be smaller */ 
+/* Optional: style font & size dropdowns to be smaller */
 
 
 .ql-toolbar {
@@ -33,14 +94,14 @@
 
 /* Button spacing */
 .ql-toolbar button {
-  margin-right: 0px;  
+  margin-right: 0px;
 }
 
 #custom-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-     gap: 40px;
+  gap: 40px;
   padding: 15px;
   /*background-color: #f9f9f9; */
 }
@@ -49,7 +110,8 @@
 #custom-toolbar .toolbar-group {
   display: flex;
   align-items: center;
-  gap: 0px; /* gap between items within group */
+  gap: 0px;
+  /* gap between items within group */
   /*border: 2px solid red;*/
 }
 
@@ -74,6 +136,7 @@
     gap: 12px;
   }
 }
+
 @media (max-width: 1468px) {
   #custom-toolbar {
     gap: 0px;
@@ -94,9 +157,12 @@
 
 #custom-toolbar {
   /* -- DEFINE YOUR COLORS HERE -- */
-  --icon-color-default: #4A4A4A; /* The default, idle color of the icons */
-  --icon-color-hover: #FFBF00;   /* The color when you hover over an icon */
-  --icon-color-active: #ffffff;  /* The color for active/selected formats (e.g., bold) */
+  --icon-color-default: #4A4A4A;
+  /* The default, idle color of the icons */
+  --icon-color-hover: #FFBF00;
+  /* The color when you hover over an icon */
+  --icon-color-active: #ffffff;
+  /* The color for active/selected formats (e.g., bold) */
   --icon-color-active-hover: #ffffff;
   /* You can also define your background colors here for consistency */
   /*--button-bg-hover: #f0f0f0;*/
@@ -117,11 +183,11 @@
 
 /* This targets the icon SVG when you hover over an already active button. */
 #custom-toolbar .ql-active:hover .ql-stroke {
-    stroke: var(--icon-color-active-hover) !important;
+  stroke: var(--icon-color-active-hover) !important;
 }
 
 #custom-toolbar .ql-active:hover .ql-fill {
-    fill: var(--icon-color-active-hover) !important;
+  fill: var(--icon-color-active-hover) !important;
 }
 
 
@@ -143,12 +209,12 @@
 #custom-toolbar .ql-image .ql-stroke,
 #custom-toolbar .ql-color .ql-stroke,
 #custom-toolbar .ql-background .ql-stroke,
-#custom-toolbar .settings-dropdown
-#custom-toolbar .ql-picker .ql-picker-label .ql-stroke {
+#custom-toolbar .settings-dropdown #custom-toolbar .ql-picker .ql-picker-label .ql-stroke {
   stroke: var(--icon-color-default) !important;
 }
 
-#custom-toolbar .ql-blockquote .ql-fill, /* Blockquote uses fill instead of stroke */
+#custom-toolbar .ql-blockquote .ql-fill,
+/* Blockquote uses fill instead of stroke */
 #custom-toolbar .ql-direction .ql-fill {
   fill: var(--icon-color-default) !important;
 }
@@ -182,9 +248,51 @@
  */
 #custom-toolbar .ql-undo,
 #custom-toolbar .ql-redo {
-    color: var(--icon-color-default);
+  color: var(--icon-color-default);
 }
+
 #custom-toolbar .ql-undo:hover,
 #custom-toolbar .ql-redo:hover {
-    color: var(--icon-color-hover);
+  color: var(--icon-color-hover);
+}
+
+.protection-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border-color);
+}
+
+.ql-protect {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.ql-protect:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-light);
+}
+
+.ql-protect.protected {
+  background: #fff3cd;
+  border-color: #ffc107;
+  color: #856404;
+}
+
+.protection-badge {
+  background: #ffc107;
+  color: #856404;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
 }

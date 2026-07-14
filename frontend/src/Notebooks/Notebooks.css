@@ -1,0 +1,306 @@
+/* Notebooks Container */
+.notebooks-container {
+    padding: 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Header
+
+ Styles */
+.notebooks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.notebooks-heading {
+    margin: 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.add-notebook-btn {
+    padding: 12px 24px;
+    background-color: #FFBF00;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+}
+
+.add-notebook-btn:hover:not(:disabled) {
+    background-color: #008000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 128, 0, 0.3);
+}
+
+.add-notebook-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Error Display */
+.notebooks-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c33;
+    font-size: 14px;
+}
+
+.error-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #c33;
+    font-size: 16px;
+    padding: 4px 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.error-close:hover {
+    opacity: 1;
+}
+
+/* Notebooks Grid */
+.notebooks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* Notebook Card */
+.notebook-card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    padding: 28px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+/* Right edge colored strip */
+.notebook-card::before {
+    content: "";
+    position: absolute;
+    top: 25%;
+    right: -2px;
+    width: 6px;
+    height: 50%;
+    background-color: #d3d3f3;
+    transition: all 0.2s ease;
+}
+
+.notebook-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.notebook-card:hover::before {
+    background-color: #FFBF00;
+}
+
+.notebook-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.notebook-title {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    word-break: break-word;
+}
+
+.notebook-note-count {
+    margin: 0 0 auto 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.notebook-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    justify-content: center;
+}
+
+.rename-btn,
+.delete-notebook-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 8px 12px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+}
+
+.rename-btn:hover {
+    opacity: 1;
+    background-color: #f0f8ff;
+}
+
+.delete-notebook-btn:hover {
+    opacity: 1;
+    background-color: #fee;
+}
+
+/* Edit Mode */
+.notebook-edit-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.notebook-name-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #FFBF00;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.notebook-name-input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 191, 0, 0.2);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.save-btn,
+.cancel-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.save-btn {
+    background-color: #008000;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #006600;
+}
+
+.cancel-btn {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Empty State */
+.notebooks-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    color: #9E9E9E;
+}
+
+.empty-state-icon {
+    font-size: 72px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #666;
+}
+
+.empty-state-text {
+    margin: 0;
+    font-size: 16px;
+    color: #999;
+    line-height: 1.6;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .notebooks-container {
+        padding: 20px;
+    }
+
+    .notebooks-heading {
+        font-size: 28px;
+    }
+
+    .notebooks-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .notebooks-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .add-notebook-btn {
+        width: 100%;
+    }
+}

@@ -9,9 +9,9 @@
 .size-input-wrapper {
   display: flex;
   align-items: center;
-  border: 2px solid #e1e5e9;
+  border: 2px solid var(--border-color);
   border-radius: 3px;
-  background-color: #fff;
+  background-color: var(--bg-card);
   padding: 0px 3px;
   height: 100%;
   box-sizing: border-box;
@@ -32,6 +32,7 @@
   /* Match Quill's toolbar font size */
   text-align: center;
   height: 100%;
+  color: var(--text-primary);
 }
 
 /* The clickable container for the arrow */
@@ -72,19 +73,15 @@
   margin-left: 5px;
 }
 
-.size-arrow-container.active .size-dropdown-arrow {
-  transform: rotate(180deg);
-}
-
 .size-dropdown-menu {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 3px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   z-index: 1000;
   max-height: 300px;
   overflow-y: auto;
@@ -100,17 +97,18 @@
   font-size: 14px;
   font-weight: 400;
   user-select: none;
+  color: var(--text-primary);
 }
 
 .size-dropdown-item:hover {
-  background: #f9fafb;
-  color: #FFBF00;
+  background: var(--bg-hover);
+  color: var(--accent-primary);
 
 }
 
 .size-dropdown-item.selected {
-  background: #f5f3ff;
-  color: #FFBF00;
+  background: var(--accent-light);
+  color: var(--accent-primary);
   font-weight: 500;
 }
 

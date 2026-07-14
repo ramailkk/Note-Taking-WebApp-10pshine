@@ -1,0 +1,170 @@
+/* Notebook Notes Container */
+.notebook-notes-container {
+    padding: 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.breadcrumb-link {
+    cursor: pointer;
+    color: #FFBF00;
+    transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+    color: #008000;
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: #ccc;
+}
+
+.breadcrumb-current {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Header */
+.notebook-notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.notebook-notes-heading {
+    margin: 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #1d1d1f;
+}
+
+.notebook-notes-count {
+    margin: 0;
+    font-size: 14px;
+    color: #999;
+}
+
+.add-note-btn {
+    padding: 12px 24px;
+    background-color: #FFBF00;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+    white-space: nowrap;
+}
+
+.add-note-btn:hover {
+    background-color: #008000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 128, 0, 0.3);
+}
+
+/* Loading/Error States */
+.loading-state,
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    color: #9E9E9E;
+}
+
+.back-btn {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background-color: #FFBF00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #008000;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 300px;
+    color: #9E9E9E;
+    text-align: center;
+    padding: 40px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #666;
+}
+
+.empty-state-text {
+    margin: 0;
+    font-size: 16px;
+    color: #999;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .notebook-notes-container {
+        padding: 20px;
+    }
+
+    .notebook-notes-heading {
+        font-size: 28px;
+    }
+}

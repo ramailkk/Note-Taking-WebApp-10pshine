@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useNote } from "../Components/NoteContext.js";
 import { useSide } from "../Components/SidebarContext";
 import { useAuth } from "../Authentication/AuthContext";
-import { API_BASE_URL} from '../App/config.js';
+import { API_BASE_URL } from '../App/config.js';
 import "./styles.css";
 
 const EmptyState = ({ searchTerm }) => {
   const isFiltered = searchTerm;
-  const { selectedNoteId, setSelectedNoteId, setSelectedNoteName } = useNote();
-  const { activeSection, setActiveSection } = useSide();
+  const { setSelectedNoteId, setSelectedNoteName } = useNote();
+  const { setActiveSection } = useSide();
   const { token } = useAuth();
 
   const navigate = useNavigate();

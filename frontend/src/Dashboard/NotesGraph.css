@@ -1,0 +1,182 @@
+.graph-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 250px);
+    min-height: 500px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+/* Override default tooltip styling from react-force-graph */
+.graph-container .graph-tooltip,
+.graph-container [class*="tooltip"],
+.graph-container>div>div[style*="position: absolute"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.graph-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 250px);
+    min-height: 500px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 40px;
+}
+
+.graph-empty-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.4;
+    color: var(--text-secondary);
+}
+
+.graph-empty-state h3 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+.graph-empty-state p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+/* Graph Controls */
+.graph-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.refresh-graph-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.refresh-graph-btn:hover:not(:disabled) {
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.refresh-graph-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.refresh-graph-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Spinning animation for refresh icon */
+.refresh-graph-btn .spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Legend */
+.graph-legend {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-card);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    min-width: 140px;
+    max-width: 180px;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
+}
+
+.graph-legend h4 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFBF00;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.legend-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .graph-legend {
+        top: 10px;
+        right: 10px;
+        padding: 12px;
+        min-width: 120px;
+    }
+
+    .graph-legend h4 {
+        font-size: 11px;
+    }
+
+    .legend-item {
+        font-size: 11px;
+        gap: 8px;
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+    }
+}

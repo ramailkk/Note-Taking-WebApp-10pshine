@@ -12,13 +12,13 @@
   justify-content: space-between;
   min-width: 100px;
   padding: 0px 10px;
-  background: white;
-  border: 2px solid #e1e5e9;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 3px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  color: #2c3e50;
+  color: var(--text-primary);
   transition: all 0.2s ease;
   user-select: none;
 }
@@ -53,7 +53,7 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: var(--bg-card);
   border-radius: 0 0 6px 6px;
   max-height: 500px;
   overflow-y: auto;
@@ -61,9 +61,10 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s ease;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 
 }
+
 .dropdown-menu.show {
   opacity: 1;
   visibility: visible;
@@ -73,22 +74,23 @@
 .dropdown-item {
   padding: 9px 10px;
   cursor: pointer;
-  border-bottom: 1px solid #f8f9fa;
+  border-bottom: 1px solid var(--border-color);
   transition: all 0.15s ease;
   display: flex;
   align-items: center;
   font-size: 15px;
   user-select: none;
+  color: var(--text-primary);
 }
 
 .dropdown-item:hover {
-  background: #f9fafb;
-  color: #FFBF00;
+  background: var(--bg-hover);
+  color: var(--accent-primary);
 }
 
 .dropdown-item.selected {
-  background: #f5f3ff;
-  color: #FFBF00;
+  background: var(--accent-light);
+  color: var(--accent-primary);
   font-weight: 500;
 }
 
@@ -97,18 +99,53 @@
 }
 
 /* Font families for preview */
-.font-arial { font-family: Arial, sans-serif; }
-.font-helvetica { font-family: Helvetica, sans-serif; }
-.font-times { font-family: "Times New Roman", serif; }
-.font-georgia { font-family: Georgia, serif; }
-.font-verdana { font-family: Verdana, sans-serif; }
-.font-tahoma { font-family: Tahoma, sans-serif; }
-.font-trebuchet { font-family: "Trebuchet MS", sans-serif; }
-.font-impact { font-family: Impact, sans-serif; }
-.font-comic { font-family: "Comic Sans MS", cursive; }
-.font-courier { font-family: "Courier New", monospace; }
-.font-lucida { font-family: "Lucida Console", monospace; }
-.font-palatino { font-family: "Palatino Linotype", serif; }
+.font-arial {
+  font-family: Arial, sans-serif;
+}
+
+.font-helvetica {
+  font-family: Helvetica, sans-serif;
+}
+
+.font-times {
+  font-family: "Times New Roman", serif;
+}
+
+.font-georgia {
+  font-family: Georgia, serif;
+}
+
+.font-verdana {
+  font-family: Verdana, sans-serif;
+}
+
+.font-tahoma {
+  font-family: Tahoma, sans-serif;
+}
+
+.font-trebuchet {
+  font-family: "Trebuchet MS", sans-serif;
+}
+
+.font-impact {
+  font-family: Impact, sans-serif;
+}
+
+.font-comic {
+  font-family: "Comic Sans MS", cursive;
+}
+
+.font-courier {
+  font-family: "Courier New", monospace;
+}
+
+.font-lucida {
+  font-family: "Lucida Console", monospace;
+}
+
+.font-palatino {
+  font-family: "Palatino Linotype", serif;
+}
 
 /* Custom scrollbar */
 .dropdown-menu::-webkit-scrollbar {

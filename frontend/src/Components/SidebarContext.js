@@ -15,7 +15,8 @@ export const SideProvider = ({ children }) => {
     <SideContext.Provider
       value={{
         activeSection,
-        setActiveSection
+        setActiveSection,
+        resetSideContext
       }}
     >
       {children}

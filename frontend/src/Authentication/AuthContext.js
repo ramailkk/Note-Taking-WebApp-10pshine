@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {
       logout();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const login = (newToken) => {
