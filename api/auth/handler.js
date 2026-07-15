@@ -4,60 +4,26 @@ const userModel = require('../_lib/userModel');
 const generateToken = require('../_lib/jwt');
 const { sendMail } = require('../_lib/mail');
 const applyCors = require('../_lib/cors');
+const getSlug = require('../_lib/getSlug');
 const logger = require('../_lib/logger');
 
-// Consolidated router for /api/auth/*.
-// Combines what used to be auth/login.js, auth/signup.js, and
-// auth/verify/[token].js into a single serverless function so the
-// deployment stays under Vercel's Hobby-plan function limit.
+// Consolidated into one function (Vercel Hobby plan caps at 12 functions
+// per deployment). Routes on [action, param] parsed from the catch-all
+// segment, the same way the old Express router dispatched by path.
+export default async function handler(req, res) {
+  if (applyCors(req, res)) return;
 
-async function login(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  const slug = getSlug(req);
+  const [action, param] = slug;
 
-  const { usernameOrEmail, password } = req.body;
+  if (action === 'signup' && req.method === 'POST') return signup(req, res);
+  if (action === 'login' && req.method === 'POST') return login(req, res);
+  if (action === 'verify' && req.method === 'GET') return verifyEmail(req, res, param);
 
-  if (!usernameOrEmail || !password) {
-    return res.status(400).json({ error: 'Username/email and password are required.' });
-  }
-
-  try {
-    const user = await userModel.findUserByUsernameOrEmail(usernameOrEmail);
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials.' });
-    }
-
-    if (!user.is_verified) {
-      return res.status(403).json({ error: 'Email not verified.' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Wrong Password' });
-    }
-
-    await userModel.updateLastLogin(user.id);
-    const token = generateToken(user.id);
-
-    logger.info({ userId: user.id }, 'Login successful');
-
-    return res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: { id: user.id, username: user.username, email: user.email, role: user.role },
-    });
-  } catch (error) {
-    logger.error({ err: error }, 'Login error');
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  return res.status(404).json({ error: 'Not found' });
 }
 
 async function signup(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -80,9 +46,6 @@ async function signup(req, res) {
 
     const newUser = await userModel.createUser(username, email, hashedPassword, token);
 
-    // IMPORTANT: set APP_URL in Vercel's env vars (Production AND Preview)
-    // to your stable domain. VERCEL_URL is only a fallback — it's the
-    // per-deployment URL and changes every deploy.
     const appUrl = process.env.APP_URL || `https://${process.env.VERCEL_URL}`;
     const verificationUrl = `${appUrl}/api/auth/verify/${token}`;
 
@@ -116,7 +79,6 @@ async function signup(req, res) {
     };
 
     await sendMail(mailOptions);
-
     logger.info({ userId: newUser.id, email }, 'New user signed up and verification email sent');
 
     return res.status(201).json({
@@ -129,38 +91,53 @@ async function signup(req, res) {
   }
 }
 
-async function verify(req, res, token) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+async function login(req, res) {
+  const { usernameOrEmail, password } = req.body;
+
+  if (!usernameOrEmail || !password) {
+    return res.status(400).json({ error: 'Username/email and password are required.' });
   }
 
   try {
-    const user = await userModel.findUserByVerificationToken(token);
+    const user = await userModel.findUserByUsernameOrEmail(usernameOrEmail);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials.' });
+    }
+    if (!user.is_verified) {
+      return res.status(403).json({ error: 'Email not verified.' });
+    }
 
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Wrong Password' });
+    }
+
+    await userModel.updateLastLogin(user.id);
+    const token = generateToken(user.id);
+    logger.info({ userId: user.id }, 'Login successful');
+
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: { id: user.id, username: user.username, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    logger.error({ err: error }, 'Login error');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function verifyEmail(req, res, token) {
+  try {
+    const user = await userModel.findUserByVerificationToken(token);
     if (!user) {
       return res.status(400).send('<h2>Invalid or expired verification link.</h2>');
     }
-
     await userModel.markUserAsVerified(user.id);
     logger.info({ userId: user.id }, 'Email verified successfully');
-
     return res.status(200).send('<h2>Email verified successfully! You can now log in.</h2>');
   } catch (err) {
     logger.error({ err }, 'Email verification error');
     return res.status(500).send('<h2>Something went wrong. Please try again.</h2>');
   }
-}
-
-export default async function handler(req, res) {
-  if (applyCors(req, res)) return;
-
-  const rawSlug = req.query.slug;
-  const slug = rawSlug == null ? [] : Array.isArray(rawSlug) ? rawSlug : [rawSlug];
-  const [first, second] = slug;
-
-  if (first === 'login') return login(req, res);
-  if (first === 'signup') return signup(req, res);
-  if (first === 'verify' && second) return verify(req, res, second);
-
-  return res.status(404).json({ error: 'Not found' });
 }
