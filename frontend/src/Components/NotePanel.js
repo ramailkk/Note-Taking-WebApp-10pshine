@@ -59,6 +59,7 @@ function NotePanel() {
   const { selectedNoteId, setSelectedNoteId } = useNote();
   const { setSelectedNoteName } = useNote();
   const { refreshNotes, setRefreshNotes } = useNote();
+  const { setNotesLoading } = useNote();
 
   const { token } = useAuth();
 
@@ -67,8 +68,10 @@ function NotePanel() {
   useEffect(() => {
     const fetchNotes = async () => {
 
-      if (!notes.length) 
+      if (!notes.length) {
         setLoading(true);
+        setNotesLoading(true);
+      }
 
       try {
 
@@ -96,6 +99,7 @@ function NotePanel() {
         console.error("Error loading notes:", err);
       } finally {
         setLoading(false); // stop loading
+        setNotesLoading(false);
       }
     };
 
@@ -107,6 +111,7 @@ function NotePanel() {
     setSelectedNoteName,
     refreshNotes,
     sortOption,
+    setNotesLoading,
   ]);
 
   const handleNewNote = async () => {
@@ -218,7 +223,11 @@ function NotePanel() {
             onClick={handleNewNote}
             disabled={isCreatingNote}
           >
-            <FaRegStickyNote className="new-note-icon" />
+            {isCreatingNote ? (
+              <span className="nb-spinner new-note-icon" />
+            ) : (
+              <FaRegStickyNote className="new-note-icon" />
+            )}
             <span>{isCreatingNote ? "Creating..." : "New Note"}</span>
           </button>
         </div>

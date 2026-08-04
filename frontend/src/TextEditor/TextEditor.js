@@ -15,12 +15,14 @@ const TextEditor = () => {
   const quillInstance = useRef(null);
   const initialRender = useRef(true);
   const [editorContent, setEditorContent] = useState("");
+  const [noteLoading, setNoteLoading] = useState(false);
 
   const { token } = useAuth();
   const { selectedNoteId, setSelectedNoteId } = useNote();
   const { selectedNoteName, setSelectedNoteName } = useNote();
   const selectedNoteIdRef = useRef(selectedNoteId);
   const { refreshNotes, setRefreshNotes } = useNote();
+  const { notesLoading } = useNote();
   const autosave = useRef(false);
   const Font = Quill.import("formats/font");
   Font.whitelist = [
@@ -206,6 +208,7 @@ const TextEditor = () => {
   useEffect(() => {
     if (!selectedNoteId) return;
     const fetchNoteHTML = async () => {
+      setNoteLoading(true);
       try {
         const response = await fetch(
           `${API_BASE_URL}/note/load/${selectedNoteId}`,
@@ -226,6 +229,8 @@ const TextEditor = () => {
         }
       } catch (err) {
         console.error("Error loading notes:", err);
+      } finally {
+        setNoteLoading(false);
       }
     };
 
@@ -284,6 +289,17 @@ const TextEditor = () => {
 
   // Show message when no note is selected
   if (!selectedNoteId) {
+    if (notesLoading) {
+      return (
+        <div className="editor-container">
+          <div className="editor-skeleton" aria-busy="true" aria-label="Loading notes">
+            <div className="skeleton-toolbar nb-skeleton" />
+            <div className="skeleton-heading nb-skeleton" />
+            <div className="skeleton-content nb-skeleton" />
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="no-note-container">
         <div className="no-note-content">
@@ -301,6 +317,13 @@ const TextEditor = () => {
       <EditableHeading value={selectedNoteName} onSave={handleSaveNoteName} />
       <div className="editor-seperator"></div>
       <div ref={editorRef} className="editor-area" />
+      {noteLoading && (
+        <div className="editor-skeleton-overlay" aria-busy="true" aria-label="Loading note">
+          <div className="skeleton-toolbar nb-skeleton" />
+          <div className="skeleton-heading nb-skeleton" />
+          <div className="skeleton-content nb-skeleton" />
+        </div>
+      )}
     </div>
   );
 };

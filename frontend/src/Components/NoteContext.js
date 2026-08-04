@@ -6,11 +6,13 @@ export const NoteProvider = ({ children }) => {
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [selectedNoteName, setSelectedNoteName] = useState(null);
   const [refreshNotes, setRefreshNotes] = useState(false);
+  const [notesLoading, setNotesLoading] = useState(true);
 
   const resetNoteContext = () => {
     setSelectedNoteId(null);
     setSelectedNoteName(null);
     setRefreshNotes(false);
+    setNotesLoading(true);
   };
 
   return (
@@ -22,6 +24,8 @@ export const NoteProvider = ({ children }) => {
         setSelectedNoteName,
         refreshNotes,
         setRefreshNotes,
+        notesLoading,
+        setNotesLoading,
         resetNoteContext
       }}
     >

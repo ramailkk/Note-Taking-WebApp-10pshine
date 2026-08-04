@@ -28,6 +28,16 @@
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-name-skeleton {
+  display: inline-block;
+  width: 160px;
+  height: 1.6rem;
+  vertical-align: middle;
 }
 
 .notes-count {
@@ -242,6 +252,11 @@
   background-color: var(--accent-primary);
 }
 
+.note-card-skeleton {
+  height: 200px;
+  border: var(--border);
+}
+
 .note-card.add-card {
   display: flex;
   align-items: center;
@@ -263,6 +278,11 @@
 }
 .note-card.add-card:hover::before {
   display: none;
+}
+
+.note-card.add-card.add-card-busy {
+  cursor: default;
+  background-color: var(--accent-primary);
 }
 
 .add-icon {
@@ -373,6 +393,9 @@
   font-weight: 700;
   font-size: 16px;
   transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 
@@ -384,6 +407,14 @@
 .create-note-btn:active {
   transform: translate(3px, 3px);
   box-shadow: none;
+}
+
+.create-note-btn:disabled {
+  cursor: not-allowed;
+  background: #e5e5e5;
+  color: #9a9a9a;
+  transform: none;
+  box-shadow: var(--shadow);
 }
 
 /* Pagination */

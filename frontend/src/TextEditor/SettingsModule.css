@@ -35,6 +35,22 @@
   transition: background-color 0.1s ease;
 }
 
+/* Item currently running a slow export (pdf/docx) */
+.settings-menu > div.settings-item-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+  pointer-events: none;
+  background-color: var(--bg);
+}
+
+/* While one item is busy, dim + lock out the rest of the menu */
+.settings-menu.menu-busy > div:not(.settings-item-loading) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .settings-menu > div:last-child {
   border-bottom: none;
 }

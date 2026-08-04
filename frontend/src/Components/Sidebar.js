@@ -23,6 +23,7 @@ function Sidebar() {
   const navigate = useNavigate();
   const { token, logout } = useAuth();
   const [username, setUsername] = useState("");
+  const [userLoading, setUserLoading] = useState(true);
 
   const handleLogout = () => {
     logout();
@@ -51,6 +52,8 @@ function Sidebar() {
         setUsername(data.username);
       } catch (err) {
         console.error("Error loading user info:", err);
+      } finally {
+        setUserLoading(false);
       }
     };
     fetchUserInfo();
@@ -72,7 +75,11 @@ function Sidebar() {
             <FaUserCircle className="user-avatar" />
           </div>
           <div className="user-info">
-            <div className="user-name">{username}</div>
+            {userLoading ? (
+              <span className="nb-skeleton user-name-skeleton" aria-label="Loading username" />
+            ) : (
+              <div className="user-name">{username}</div>
+            )}
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styles.css";
 import { FaPlus } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
@@ -18,10 +18,13 @@ const NoteCard = ({ note = {}, onClick, isAddCard = false, isLoading}) => {
   const { selectedNoteId, setSelectedNoteId, setSelectedNoteName } = useNote();
   const { activeSection, setActiveSection } = useSide();
   const { token } = useAuth();
+  const [isCreating, setIsCreating] = useState(false);
 
   const navigate = useNavigate();
 
   const handleNewNote = async () => {
+    if (isCreating) return;
+    setIsCreating(true);
     try {
       const response = await fetch(`${API_BASE_URL}/note/create`, {
         method: "POST",
@@ -46,14 +49,20 @@ const NoteCard = ({ note = {}, onClick, isAddCard = false, isLoading}) => {
     } catch (err) {
       console.error("Error creating new note:", err);
       alert("Failed to create new note");
+    } finally {
+      setIsCreating(false);
     }
   };
 
   if (isAddCard) {
     return (
-      <div className="note-card add-card" onClick={handleNewNote}>
+      <div
+        className={`note-card add-card ${isCreating ? "add-card-busy" : ""}`}
+        onClick={isCreating ? undefined : handleNewNote}
+        aria-disabled={isCreating}
+      >
         <div className="add-icon">
-          <FaPlus />
+          {isCreating ? <span className="nb-spinner nb-spinner--lg" /> : <FaPlus />}
         </div>
       </div>
     );

@@ -97,11 +97,11 @@ class SettingsModule {
       }
 
       opt.dataset.value = item.value;
+      opt.dataset.label = opt.innerHTML;
 
       opt.addEventListener("click", (e) => {
         e.stopPropagation();
-        this.closeMenu();
-        this.handleOption(item.value);
+        this.handleOption(item.value, opt);
       });
 
       this.menu.appendChild(opt);
@@ -146,7 +146,23 @@ class SettingsModule {
     });
   }
 
-  handleOption(option) {
+  // Swaps a menu item's label for a spinner and dims its siblings while a
+  // slow export (pdf/docx) runs, instead of the menu just closing and
+  // leaving the user guessing whether anything happened.
+  setItemLoading(itemEl, isLoading) {
+    if (!itemEl) return;
+    if (isLoading) {
+      itemEl.innerHTML = `<span class="nb-spinner"></span> Working...`;
+      itemEl.classList.add("settings-item-loading");
+      this.menu.classList.add("menu-busy");
+    } else {
+      itemEl.innerHTML = itemEl.dataset.label ?? itemEl.innerHTML;
+      itemEl.classList.remove("settings-item-loading");
+      this.menu.classList.remove("menu-busy");
+    }
+  }
+
+  handleOption(option, itemEl) {
     const content = this.quill.root.innerHTML;
     const text = this.quill.getText();
 
@@ -154,30 +170,43 @@ class SettingsModule {
       switch (option) {
         case "autosave":
           window.dispatchEvent(new CustomEvent("auto-save"));
+          this.closeMenu();
           break;
         case "save":
           window.dispatchEvent(new CustomEvent("manual-save"));
+          this.closeMenu();
           break;
         case "pdf":
-          this.exportAsPDF(content, name);
+          this.setItemLoading(itemEl, true);
+          this.exportAsPDF(content, name).finally(() => {
+            this.setItemLoading(itemEl, false);
+            this.closeMenu();
+          });
           break;
         case "docx":
-          this.exportAsDocx(content, name);
+          this.setItemLoading(itemEl, true);
+          this.exportAsDocx(content, name).finally(() => {
+            this.setItemLoading(itemEl, false);
+            this.closeMenu();
+          });
           break;
         case "txt":
           this.exportAsText(text, name);
+          this.closeMenu();
           break;
         case "delete":
           window.dispatchEvent(new CustomEvent("delete-note"));
+          this.closeMenu();
           break;
         default:
+          this.closeMenu();
           break;
       }
     });
   }
 
   exportAsPDF(content, name) {
-    import("html2pdf.js").then((html2pdf) => {
+    return import("html2pdf.js").then((html2pdf) =>
       html2pdf
         .default()
         .from(content)
@@ -187,12 +216,12 @@ class SettingsModule {
           html2canvas: { scale: 2 },
           jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
         })
-        .save();
-    });
+        .save(),
+    );
   }
 
   exportAsDocx(content, name) {
-    import("html-docx-js/dist/html-docx").then((htmlDocx) => {
+    return import("html-docx-js/dist/html-docx").then((htmlDocx) => {
       const doc = htmlDocx.default.asBlob(content);
       const url = URL.createObjectURL(doc);
       const link = document.createElement("a");

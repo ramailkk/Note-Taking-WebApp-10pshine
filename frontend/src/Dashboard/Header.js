@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import "./styles.css";
 
-const Header = ({ userName }) => {
+const Header = ({ userName, loading }) => {
   const getTimeOfDay = () => {
     const hour = new Date().getHours();
     return hour >= 6 && hour < 18 ? "day" : "night";
@@ -39,7 +39,14 @@ const Header = ({ userName }) => {
 
   return (
     <div className="dashboard-header">
-      <h1 className="welcome-heading fade-in">{greeting} {userName}</h1>
+      <h1 className="welcome-heading fade-in">
+        {greeting}{" "}
+        {loading ? (
+          <span className="nb-skeleton header-name-skeleton" aria-label="Loading name" />
+        ) : (
+          userName
+        )}
+      </h1>
     </div>
   );
 };

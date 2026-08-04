@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiSearch, FiFileText } from "react-icons/fi"; // Feather icons
 import { useNavigate } from "react-router-dom";
 import { useNote } from "../Components/NoteContext.js";
@@ -12,10 +12,13 @@ const EmptyState = ({ searchTerm }) => {
   const { selectedNoteId, setSelectedNoteId, setSelectedNoteName } = useNote();
   const { activeSection, setActiveSection } = useSide();
   const { token } = useAuth();
+  const [isCreating, setIsCreating] = useState(false);
 
   const navigate = useNavigate();
 
   const handleNewNote = async () => {
+    if (isCreating) return;
+    setIsCreating(true);
     try {
       const response = await fetch(`${API_BASE_URL}/note/create`, {
         method: "POST",
@@ -40,6 +43,7 @@ const EmptyState = ({ searchTerm }) => {
     } catch (err) {
       console.error("Error creating new note:", err);
       alert("Failed to create new note");
+      setIsCreating(false);
     }
   };
 
@@ -60,7 +64,14 @@ const EmptyState = ({ searchTerm }) => {
       </p>
 
       {!isFiltered && (
-        <button className="create-note-btn slide-up" onClick={handleNewNote}>Create New Note</button>
+        <button
+          className="create-note-btn slide-up"
+          onClick={handleNewNote}
+          disabled={isCreating}
+        >
+          {isCreating && <span className="nb-spinner" />}
+          {isCreating ? "Creating..." : "Create New Note"}
+        </button>
       )}
     </div>
   );

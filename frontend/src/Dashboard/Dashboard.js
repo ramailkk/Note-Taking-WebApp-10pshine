@@ -34,8 +34,10 @@ const Dashboard = ({
     fontFamily: "sans-serif",
   },
 }) => {
-  const [username, setUsername] = useState(); 
+  const [username, setUsername] = useState();
+  const [userLoading, setUserLoading] = useState(true);
   const [notes, setNotes] = useState([]);
+  const [notesLoading, setNotesLoading] = useState(true);
   const token = localStorage.getItem("token");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("updated_at");
@@ -49,7 +51,8 @@ const Dashboard = ({
 
 
   const fetchNotes = useCallback(async () => {
-    try { 
+    setNotesLoading(true);
+    try {
 
       const queryParams = new URLSearchParams({
         page: currentPage,
@@ -75,6 +78,8 @@ const Dashboard = ({
       }
     } catch (err) {
       console.error("Error fetching notes", err);
+    } finally {
+      setNotesLoading(false);
     }
   }, [searchTerm, sortBy, sortOrder, currentPage, limit]);
 
@@ -104,6 +109,8 @@ const Dashboard = ({
         setUsername(data.username);
       } catch (err) {
         console.error("Error loading user info:", err);
+      } finally {
+        setUserLoading(false);
       }
     };
     fetchUserInfo();
@@ -111,7 +118,7 @@ const Dashboard = ({
 
   return (
     <div className="notes-dashboard">
-      <Header userName={username} />
+      <Header userName={username} loading={userLoading} />
 
       <div className="search-container">
         <SearchBar
@@ -132,7 +139,13 @@ const Dashboard = ({
         />
       </div>
 
-      {notes.length > 0 ? (
+      {notesLoading ? (
+        <div className="notes-grid" aria-busy="true" aria-label="Loading notes">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="note-card-skeleton nb-skeleton" />
+          ))}
+        </div>
+      ) : notes.length > 0 ? (
         <>
           <NotesGrid filteredAndSortedNotes={notes} gridGap={gridGap} />
           <Pagination

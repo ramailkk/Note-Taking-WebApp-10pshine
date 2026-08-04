@@ -249,6 +249,19 @@
   box-shadow: var(--shadow);
   transition: var(--transition-fast);
   margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.submit-button:disabled {
+  cursor: not-allowed;
+}
+
+.submit-button:disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow);
 }
 
 .submit-button:hover {

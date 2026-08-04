@@ -15,6 +15,7 @@ function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,6 +29,7 @@ function Login() {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setSubmitting(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -46,6 +48,7 @@ function Login() {
       navigate("/home");
     } catch (err) {
       setError(err.message);
+      setSubmitting(false);
     }
   };
 
@@ -100,8 +103,13 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="submit-button button-enabled">
-            Sign In
+          <button
+            type="submit"
+            className="submit-button button-enabled"
+            disabled={submitting}
+          >
+            {submitting && <span className="nb-spinner" />}
+            {submitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
 

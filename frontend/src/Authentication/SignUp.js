@@ -4,7 +4,7 @@ import "./Auth.css"; // We will update this file with the new styles
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../App/config";
 
-import { FaScroll } from "react-icons/fa";
+import { FaScroll, FaLock } from "react-icons/fa";
 
 // --- All your component logic remains the same. The only change is in the returned JSX. ---
 function SignUp() {
@@ -249,7 +249,11 @@ function SignUp() {
                 : "button-enabled"
             }`}
           >
-            Create Account
+            {submitting && <span className="nb-spinner" />}
+            {!submitting && !isFormSubmittable && (
+              <FaLock className="nb-lock-icon" />
+            )}
+            {submitting ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 

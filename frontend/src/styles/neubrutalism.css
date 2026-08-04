@@ -151,3 +151,84 @@
   padding: 0.25rem 0.6rem;
   background: var(--surface);
 }
+
+/* ---------------------------------------------------------------- */
+/* Spinners — small/inline only. Never use these for whole pages,   */
+/* cards, or panels; that's what .nb-skeleton is for.               */
+/* ---------------------------------------------------------------- */
+
+.nb-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 3px solid rgba(0, 0, 0, 0.18);
+  border-top: 3px solid var(--ink);
+  animation: nb-spin 0.7s steps(8) infinite;
+}
+
+.nb-spinner--sm {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+}
+
+.nb-spinner--lg {
+  width: 22px;
+  height: 22px;
+  border-width: 3px;
+}
+
+/* On solid dark/ink backgrounds, invert so the spinner stays visible */
+.nb-spinner--on-dark {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+}
+
+@keyframes nb-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------------------------------------------------------------- */
+/* Lock affordance — for buttons disabled by an unmet condition     */
+/* (validation, permissions), as opposed to an in-flight request    */
+/* (use .nb-spinner for that instead).                              */
+/* ---------------------------------------------------------------- */
+
+.nb-lock-icon {
+  flex-shrink: 0;
+  font-size: 0.85em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Skeletons — for big surfaces: page sections, cards, panels,      */
+/* profile blocks. Never use these for buttons; use .nb-spinner.    */
+/* ---------------------------------------------------------------- */
+
+.nb-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #ececec;
+  border: var(--border-thin);
+}
+
+.nb-skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  animation: nb-shimmer 1.4s infinite;
+}
+
+@keyframes nb-shimmer {
+  100% { transform: translateX(220%); }
+}
+
+.nb-skeleton-text {
+  height: 0.9em;
+  width: 100%;
+  border: var(--border-thin);
+}
