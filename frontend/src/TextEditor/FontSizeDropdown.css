@@ -1,37 +1,39 @@
 .size-dropdown-container {
   position: relative;
   display: inline-block;
-  font-family: sans-serif;
-  height: 24px;
-  /* Match Quill's default toolbar item height */
+  font-family: var(--font-body);
+  height: 26px;
 }
 
 .size-input-wrapper {
   display: flex;
   align-items: center;
-  border: 2px solid #e1e5e9;
-  border-radius: 3px;
-  background-color: #fff;
-  padding: 0px 3px;
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  padding: 0 4px;
   height: 100%;
   box-sizing: border-box;
+  transition: var(--transition-fast);
 }
 
 .size-input-wrapper:hover {
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
 }
 
 .size-input {
   width: 2.5em;
-  /* Adjust width as needed */
   border: none;
   background: transparent;
   outline: none;
   padding: 0;
   font-size: 14px;
-  /* Match Quill's toolbar font size */
+  font-family: var(--font-mono);
+  font-weight: 700;
   text-align: center;
   height: 100%;
+  color: var(--ink);
 }
 
 /* The clickable container for the arrow */
@@ -48,16 +50,9 @@
 
 .size-input-wrapper.active,
 .size-input-wrapper:focus-within {
-  border-color: #FFBF00;
-}
-
-.size-input-arrow-container.active,
-.size-input-wrapper:focus-within {
-  border-color: #FFBF00;
-}
-
-.size-input.active {
-  border-color: #FFBF00;
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  background: var(--accent-primary);
 }
 
 
@@ -67,24 +62,20 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid #7f8c8d;
+  border-top: 5px solid var(--ink);
   transition: transform 0.2s ease;
   margin-left: 5px;
-}
-
-.size-arrow-container.active .size-dropdown-arrow {
-  transform: rotate(180deg);
 }
 
 .size-dropdown-menu {
   display: none;
   position: absolute;
-  top: 100%;
+  top: calc(100% + 6px);
   left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  background-color: var(--surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
   z-index: 1000;
   max-height: 300px;
   overflow-y: auto;
@@ -95,23 +86,22 @@
 }
 
 .size-dropdown-item {
-  padding: 5px 20px;
+  padding: 6px 20px;
   white-space: nowrap;
   font-size: 14px;
-  font-weight: 400;
+  font-family: var(--font-mono);
+  font-weight: 600;
   user-select: none;
+  cursor: pointer;
 }
 
 .size-dropdown-item:hover {
-  background: #f9fafb;
-  color: #FFBF00;
-
+  background: var(--accent-primary);
 }
 
 .size-dropdown-item.selected {
-  background: #f5f3ff;
-  color: #FFBF00;
-  font-weight: 500;
+  background: var(--bg);
+  font-weight: 700;
 }
 
 /* Custom scrollbar */
@@ -120,14 +110,9 @@
 }
 
 .size-dropdown-menu::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 .size-dropdown-menu::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
-}
-
-.size-dropdown-menu::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #000;
 }

@@ -24,33 +24,32 @@
 .ql-font-serif { font-family: serif; }
 
 
-/* Optional: style font & size dropdowns to be smaller */ 
-
-
 .ql-toolbar {
   border: none !important;
 }
 
 /* Button spacing */
 .ql-toolbar button {
-  margin-right: 0px;  
+  margin-right: 0px;
+  width: 30px;
+  height: 30px;
 }
 
 #custom-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-     gap: 40px;
-  padding: 15px;
-  /*background-color: #f9f9f9; */
+  gap: 28px;
+  padding: 12px 16px;
+  background-color: var(--bg);
+  border-bottom: var(--border-thick);
 }
 
 /* Each group is a flex row */
 #custom-toolbar .toolbar-group {
   display: flex;
   align-items: center;
-  gap: 0px; /* gap between items within group */
-  /*border: 2px solid red;*/
+  gap: 2px;
 }
 
 .settings-dropdown {
@@ -59,24 +58,24 @@
 
 @media (max-width: 1700px) {
   #custom-toolbar {
-    gap: 32px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 1641px) {
   #custom-toolbar {
-    gap: 20px;
+    gap: 14px;
   }
 }
 
 @media (max-width: 1550px) {
   #custom-toolbar {
-    gap: 12px;
+    gap: 8px;
   }
 }
 @media (max-width: 1468px) {
   #custom-toolbar {
-    gap: 0px;
+    gap: 2px;
   }
 }
 
@@ -94,25 +93,34 @@
 
 #custom-toolbar {
   /* -- DEFINE YOUR COLORS HERE -- */
-  --icon-color-default: #4A4A4A; /* The default, idle color of the icons */
-  --icon-color-hover: #FFBF00;   /* The color when you hover over an icon */
-  --icon-color-active: #ffffff;  /* The color for active/selected formats (e.g., bold) */
-  --icon-color-active-hover: #ffffff;
-  /* You can also define your background colors here for consistency */
-  /*--button-bg-hover: #f0f0f0;*/
-  --button-bg-active: #FFBF00;
+  --icon-color-default: #000000; /* The default, idle color of the icons */
+  --icon-color-hover: #000000;   /* The color when you hover over an icon */
+  --icon-color-active: #000000;  /* The color for active/selected formats (e.g., bold) */
+  --icon-color-active-hover: #000000;
+  --button-bg-hover: var(--surface);
+  --button-bg-active: var(--accent-primary);
 }
 
+#custom-toolbar button,
+#custom-toolbar .ql-picker-label {
+  border: var(--border-thin);
+  border-color: transparent;
+  border-radius: var(--radius);
+  transition: var(--transition-fast);
+}
 
 #custom-toolbar button:hover,
 #custom-toolbar .ql-picker-label:hover {
   background-color: var(--button-bg-hover);
-  border-radius: 5px;
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
 }
 
 #custom-toolbar .ql-active {
   background-color: var(--button-bg-active) !important;
-  border-radius: 5px;
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
 }
 
 /* This targets the icon SVG when you hover over an already active button. */
@@ -183,6 +191,9 @@
 #custom-toolbar .ql-undo,
 #custom-toolbar .ql-redo {
     color: var(--icon-color-default);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 16px;
 }
 #custom-toolbar .ql-undo:hover,
 #custom-toolbar .ql-redo:hover {

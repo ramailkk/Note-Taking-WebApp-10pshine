@@ -1,0 +1,153 @@
+/*
+  ScrollCraft — Neubrutalist design tokens.
+  Loaded once (see index.js). Every component stylesheet in the app
+  builds on these custom properties instead of inventing new colors/shadows.
+*/
+
+:root {
+  /* Structural */
+  --border: 3px solid #000;
+  --border-thin: 2px solid #000;
+  --border-thick: 4px solid #000;
+  --radius: 0;
+
+  /* Shadows — offset, zero blur, always */
+  --shadow-sm: 3px 3px 0 0 #000;
+  --shadow: 5px 5px 0 0 #000;
+  --shadow-lg: 8px 8px 0 0 #000;
+  --shadow-xl: 12px 12px 0 0 #000;
+
+  /* Palette */
+  --bg: #FFFDF5;
+  --surface: #FFFFFF;
+  --ink: #000000;
+  --muted: #4A4A4A;
+
+  --yellow: #FFD23F;
+  --pink: #FF6B6B;
+  --blue: #74B9FF;
+  --green: #88D498;
+  --orange: #FFA552;
+  --lavender: #B8A9FA;
+
+  /* Semantic roles — keep consistent across the whole app */
+  --accent-primary: var(--yellow);
+  --accent-danger: var(--pink);
+  --accent-info: var(--blue);
+  --accent-success: var(--green);
+  --accent-warning: var(--orange);
+
+  /* Type */
+  --font-display: 'Syne', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+
+  /* Motion */
+  --transition-fast: transform 0.1s ease, box-shadow 0.1s ease;
+  --transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Base element resets shared across the app */
+
+.nb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-primary);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.nb-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 0 #000;
+}
+
+.nb-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.nb-btn:focus-visible {
+  outline: 3px solid var(--accent-info);
+  outline-offset: 3px;
+}
+
+.nb-btn:disabled {
+  cursor: not-allowed;
+  background: #e5e5e5;
+  color: #9a9a9a;
+  box-shadow: var(--shadow);
+  transform: none;
+}
+
+.nb-btn--danger {
+  background: var(--accent-danger);
+}
+
+.nb-btn--ghost {
+  background: transparent;
+  box-shadow: none;
+}
+
+.nb-btn--ghost:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.nb-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--ink);
+  transition: var(--transition);
+  outline: none;
+}
+
+.nb-input::placeholder {
+  color: #8a8a8a;
+}
+
+.nb-input:focus {
+  outline: 3px solid var(--accent-info);
+  outline-offset: 2px;
+  box-shadow: var(--shadow);
+  transform: translate(-1px, -1px);
+}
+
+.nb-card {
+  background: var(--surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.nb-badge {
+  display: inline-flex;
+  align-items: center;
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--surface);
+}

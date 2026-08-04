@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles.css";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
@@ -10,22 +11,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         key={i}
         onClick={() => onPageChange(i)}
-        style={{
-          "margin-right": "4px",
-          padding: "10px 15px",
-          "border-radius": '10px',
-          background: i === currentPage ? "#FFBF00" : "#ccc",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}
+        className={`pagination-btn ${i === currentPage ? "active" : ""}`}
       >
         {i}
       </button>
     );
   }
 
-  return <div style={{ marginTop: "20px", textAlign: "right" }}>{pages}</div>;
+  return <div className="pagination-bar">{pages}</div>;
 };
 
 export default Pagination;
